@@ -1,0 +1,6 @@
+{
+  "name": "wfeedback-ui",
+  "dependencies": {
+    "gulp-cli": "^2.3.0"
+  }
+}

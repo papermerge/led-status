@@ -1,12 +1,4 @@
-html {
-    body {
-        margin: 0;
-        padding: 0;
-    }
-}
-
 .led {
-    margin: 20px auto;
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -16,6 +8,11 @@ html {
 .led-red {
     background-color: #F00;
 }
+
+.led-red.blink {
+    animation: red_blink 0.8s infinite;
+}
+
 .led-orange {
     background-color: #FF7000;
 }
@@ -28,6 +25,36 @@ html {
     background-color: #80FF00;
 }
 
+.led-green.blink {
+    animation: green_blink 0.8s infinite;
+}
+
 .led-blue {
     background-color: #06F;
+}
+
+@keyframes red_blink {
+    from { 
+        background-color: #F00;
+    }
+    50% {
+        background-color: #800;
+        box-shadow: #000 0 -1px 1px 1px;
+    }
+    to {
+        background-color: #F00;
+    }
+}
+
+@keyframes green_blink {
+    from { 
+        background-color: #80FF00;
+    }
+    50% {
+        background-color: #438400;
+        box-shadow: #000 0 -1px 1px 1px;
+    }
+    to {
+        background-color: #80FF00;
+    }
 }

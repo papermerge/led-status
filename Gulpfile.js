@@ -23,20 +23,24 @@ function js_task() {
 }
 
 function cache_bust_task() {
+    let cbString = new Date().getTime();
+
     return src(['index.html'])
     .pipe(replace(/cb=\d+/g, 'cb=' + cbString))
     .pipe(dest('.'))
 }
 
+/*
 function watch_task() {
     watch(
         [files.scss_path, files.js_path],
-        parallel(sass_task, js_task)
-    )
+        [sass_task, js_task, cache_bust_task]
+    );
 }
+*/
 
 exports.default = series(
-    parallel(sass_task, js_task),
+    sass_task,
+    js_task,
     cache_bust_task,
-    watch_task
 );

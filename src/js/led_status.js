@@ -1,6 +1,6 @@
 import _ from "underscore";
 
-class LEDStatus {
+export class LEDStatus {
 
     constructor(consumer) {
         if (_.isEmpty(consumer)) {
@@ -8,7 +8,7 @@ class LEDStatus {
             return;
         }
         this.consumer = consumer;
-        this.consumer.on("leds.message", on_leds_message, this);
+        this.consumer.on("leds.message", this.on_leds_message, this);
     }
 
     on_leds_message(message) {
@@ -25,5 +25,6 @@ class LEDStatus {
             return ;
         }
 
+        console.log(message);
     }
 }

@@ -5,8 +5,8 @@ const replace = require('gulp-replace');
 const sourcemaps = require('gulp-sourcemaps');
 
 const files = {
-    sass_path: "app/scss/**/*.scss",
-    js_path: "app/js/**/*.js"
+    sass_path: "leds/scss/**/*.scss",
+    js_path: "leds/js/**/*.js"
 };
 
 const distribution_folder = "dist";

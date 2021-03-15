@@ -1,30 +1,73 @@
 import _ from "underscore";
+import $ from "jquery";
 
-export class LEDStatus {
+export const OCR_START = 'ocr_start';
 
-    constructor(dispatcher) {
+
+export class LEDDocumentStatus {
+
+    constructor(dispatcher, config={}) {
         if (_.isEmpty(dispatcher)) {
             console.error("Empty consumer provided");
             return;
         }
         this._dispatcher = dispatcher;
-        this._dispatcher.on("leds.message", this.on_leds_message, this);
+        this._config = config;
+        this._dispatcher.on("leds.document", this.on_update, this);
     }
 
-    on_leds_message(message) {
-        /*
-        message is a dictionary with following keys
-            
-            * status - str - can be one of {'ocr_start', 'txt_ready', 'hocr_ready'}
-            * page - dictionary with following keys:
-                - page_id
-                - document_id
-                - page_number
-        */
+    on_update(message) {
+        let led_doc;
+
         if (_.isEmpty(message)) {
             return ;
         }
+        this.update(message['document_data'], message['ocr_state']);
+    }
 
-        console.log(message);
+    update(doc_data, ocr_state) {
+
+        let $dom_node = this.find_node(doc_data);
+
+        if ($dom_node) {
+            this.update_state($dom_elem, ocr_state);
+        }
+    }
+
+    find_node(doc_data) {
+        let doc_node = $(config['node_selector']).find(
+            `[data-id='${doc_data['document_id']}']`
+        );
+        return doc_node;
+    }
+
+    update_state($dom_elem, ocr_state) {
+        let $led_elem;
+
+        if (_.isEmpty($dom_elem)) {
+            console.error("LEDStatus: empty node element");
+            return;
+        }
+
+        $led_elem = $dom_elem.find(config['led_selector']);
+        if (_.isEmpty($led_elem)) {
+            console.error("LEDStatus: empty led status element");
+            return;
+        }
+
+        if (ocr_state['state'] == OCR_START) {
+            // green blinking
+            $led_elem.addClass('led-green').addClass('blink');
+        }
+
+        if (ocr_state['state'] == OCR_COMPLETE && ocr_state['color'] == OCR_SUCCESS) {
+            // green static
+            $led_elem.addClass('led-green').removeClass('blink');
+        }
+
+        if (ocr_state['state'] == OCR_COMPLETE && ocr_state['color'] == OCR_ERROR) {
+            // red static
+            $led_elem.addClass('led-red').removeClass('blink');
+        }
     }
 }

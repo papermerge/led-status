@@ -2,13 +2,13 @@ import _ from "underscore";
 
 export class LEDStatus {
 
-    constructor(consumer) {
-        if (_.isEmpty(consumer)) {
+    constructor(dispatcher) {
+        if (_.isEmpty(dispatcher)) {
             console.error("Empty consumer provided");
             return;
         }
-        this.consumer = consumer;
-        this.consumer.on("leds.message", this.on_leds_message, this);
+        this._dispatcher = dispatcher;
+        this._dispatcher.on("leds.message", this.on_leds_message, this);
     }
 
     on_leds_message(message) {

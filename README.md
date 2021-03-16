@@ -1,16 +1,18 @@
 # LED Status Indicators
 
-LED statuses provide (user interface) workers feedback for various background tasks like document/page OCR.
+LED statuses provide visual feedback for various background tasks like document/page OCR.
 
-## Dependencies
+## Project Structure
 
-This project depends on following libraries:
+Project contains following folders:
 
-    * [backbonejs](https://backbonejs.org)
-    * [underscorejs](https://underscorejs.org)
-    * [jquery](https://jquery.com/)
+* src - source code of the package
+* dist - distribution + bundled version of the package
+* site - local project (flask based) used as demo of usage + documentation
 
 ## Usage
+
+
 
 Following command will assemble assets into dist folder:
 

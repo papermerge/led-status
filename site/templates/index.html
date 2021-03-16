@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+  <main class="container">
+    <section class="content">
+        <h1>LED Status Indicators</h1>
+        <p>
+            Attches LED status indicator to the elements with .led-status css class.
+        </p>
+        <p>LED status can be for:</p>
+        <ul>
+            <li>1. Documents - in documents browser</li>
+            <li>2. Pages - in document viewer</li>
+        </ul>
+    </section>
+    <h2>Examples</h2>
+    <ul>
+        <li>
+            <p>Red static:</p>
+            <div class="led led-red"></div>
+        </li>
+        <li>
+            <p>Red blinking:</p>
+            <div class="led led-red blink"></div>
+        </li>
+        <li>
+            <p>Green static:</p>
+            <div class="led led-green"></div>
+        </li>
+        <li>
+            <p>Green blinking:</p>
+            <div class="led led-green blink"></div>
+        </li>
+    </ul>
+    <h2>Change State Example</h2>
+        <p>
+            Change state (led indicators) of following nodes:
+        </p>
+        <p>
+
+        </p>
+        <p>
+          <div class="play-view">
+            <select name="folder" id="folder-selector">
+              <option value="1">Folder 1</option>
+              <option value="2">Folder 2</option>
+              <option value="3">Folder 3</option>
+            </select>
+            <select name="state" id="folder-state">
+              <option value="1">Pending</option>
+              <option value="2">OCR Started</option>
+              <option value="3">OCR Complete with Success</option>
+              <option value="4">OCR Complete with Error</option>
+            </select>
+            <button class="apply">Apply</button>
+            <ul>
+                <li>
+                  <div class="node" data-id="1">
+                    <div class="folder"></div>
+                    <div class="footer">
+                      <div class="led led-yellow"></div>
+                      <div class="title">Folder 1</div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="node" data-id="2">
+                    <div class="folder"></div>
+                    <div class="led led-yellow"></div>
+                    <div class="title">Folder 2</div>
+                  </div>
+                </li>
+                <li>
+                  <div class="node" data-id="3">
+                    <div class="folder"></div>
+                    <div class="led led-yellow"></div>
+                    <div class="title">Folder 3</div>
+                  </div>
+                </li>
+            </ul>
+          </div>
+        </p>
+    </aside>
+  </main>
+{% endblock %}

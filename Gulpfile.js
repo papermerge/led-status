@@ -2,6 +2,8 @@ const {src, dest, watch, series} = require('gulp');
 const sass = require('gulp-sass');
 const run = require('gulp-run-command').default;
 const sourcemaps = require('gulp-sourcemaps');
+const webpack = require('webpack-stream');
+const webpack_config = require('./webpack.config.js');
 
 const files = {
     sass_path: "src/scss/**/*.scss",
@@ -16,9 +18,10 @@ function sass_task() {
         .pipe(dest(distribution_folder));
 }
 
-function js_bundle(cb) {
-    run("npx webpack --mode development");
-    cb();
+function js_bundle() {
+    return src('src/index.js')
+      .pipe(webpack(webpack_config))
+      .pipe(dest('dist/'));
 }
 
 /*

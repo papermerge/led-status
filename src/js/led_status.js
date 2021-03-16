@@ -57,6 +57,7 @@ export class LEDDocumentStatus {
             `Node selector = ${selector}[data-id='${document_id}'], count=${doc_node.length}`
         );
         */
+        
         return doc_node;
     }
 
@@ -67,6 +68,7 @@ export class LEDDocumentStatus {
             console.error("LEDStatus: empty node element");
             return;
         }
+
 
         css_selector = this._config['led_selector']
         $led_elem = $dom_node.find(css_selector);

@@ -1,5 +1,6 @@
 {
-  "name": "led-status",
+  "name": "led_status",
+  "type": "module",
   "keywords": [
     "papermerge",
     "dms",

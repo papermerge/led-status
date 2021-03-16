@@ -1,8 +1,5 @@
-import $ from "jquery";
-import _ from "underscore";
-import Backbone from "backbone";
+import { LEDDocumentStatus } from "../dist/leds.bundle.js";
 
-import { LEDDocumentStatus } from "./js/led_status";
 
 $(function(){
 
@@ -36,6 +33,4 @@ $(function(){
         );
 
     });
-
-    
 });

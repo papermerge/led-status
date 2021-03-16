@@ -19,7 +19,7 @@ function sass_task() {
 }
 
 function js_bundle() {
-    return src('src/index.js')
+    return src('src/js/led_status.js')
       .pipe(webpack(webpack_config))
       .pipe(dest('dist/'));
 }

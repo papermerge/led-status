@@ -15,7 +15,6 @@ const LED_CLASSES = [
     GREEN, YELLOW, RED, BLINK
 ]
 
-
 export class LEDDocumentStatus {
 
     constructor(dispatcher, config={}) {

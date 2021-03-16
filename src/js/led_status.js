@@ -47,28 +47,43 @@ export class LEDDocumentStatus {
     }
 
     find_node(doc_data) {
-        let doc_node = $(this._config['node_selector']).find(
-            `[data-id='${doc_data['document_id']}']`
+        let doc_node, nodes, selector, document_id;
+
+        document_id = doc_data['document_id'];
+        selector = this._config['node_selector'];
+        doc_node = $(`${selector}[data-id='${document_id}']`);
+
+        /*
+        console.log(
+            `Node selector = ${selector}[data-id='${document_id}'], count=${doc_node.length}`
         );
+        */
+
         return doc_node;
     }
 
-    update_state($dom_elem, ocr_state) {
-        let $led_elem, state, result;
+    update_state($dom_node, ocr_state) {
+        let $led_elem, state, result, css_selector;
 
-        if (_.isEmpty($dom_elem)) {
+        if (_.isEmpty($dom_node)) {
             console.error("LEDStatus: empty node element");
             return;
         }
 
-        $led_elem = $dom_elem.find(this._config['led_selector']);
+        css_selector = this._config['led_selector']
+        $led_elem = $dom_node.find(css_selector);
+
         if (_.isEmpty($led_elem)) {
             console.error("LEDStatus: empty led status element");
             return;
         }
 
+        //console.log(`Found count ${ $led_elem.length } led elements`);
+
         state = ocr_state['state'];
         result = ocr_state['result']
+
+        //console.log(`state=${state}`)
 
         if (state == OCR_START) {
             // green blinking

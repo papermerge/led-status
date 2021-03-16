@@ -3,6 +3,15 @@ import $ from "jquery";
 
 export const OCR_START = 'ocr_start';
 
+const YELLOW = 'led-yellow';
+const GREEN = 'led-green';
+const RED = 'led-red';
+const BLINK = 'blink';
+
+const LED_CLASSES = [
+    GREEN, YELLOW, RED, BLINK
+]
+
 
 export class LEDDocumentStatus {
 
@@ -42,7 +51,7 @@ export class LEDDocumentStatus {
     }
 
     update_state($dom_elem, ocr_state) {
-        let $led_elem;
+        let $led_elem, state, result;
 
         if (_.isEmpty($dom_elem)) {
             console.error("LEDStatus: empty node element");
@@ -55,19 +64,25 @@ export class LEDDocumentStatus {
             return;
         }
 
-        if (ocr_state['state'] == OCR_START) {
+        state = ocr_state['state'];
+        result = ocr_state['result']
+
+        if (state == OCR_START) {
             // green blinking
-            $led_elem.addClass('led-green').addClass('blink');
+            $led_elem.removeClass(LED_CLASSES);
+            $led_elem.addClass([GREEN, BLINK])
         }
 
-        if (ocr_state['state'] == OCR_COMPLETE && ocr_state['color'] == OCR_SUCCESS) {
+        if (state == OCR_COMPLETE && result == OCR_SUCCESS) {
             // green static
-            $led_elem.addClass('led-green').removeClass('blink');
+            $led_elem.removeClass(LED_CLASSES);
+            $led_elem.addClass([GREEN])
         }
 
-        if (ocr_state['state'] == OCR_COMPLETE && ocr_state['color'] == OCR_ERROR) {
+        if (state == OCR_COMPLETE && result == OCR_ERROR) {
             // red static
-            $led_elem.addClass('led-red').removeClass('blink');
+            $led_elem.removeClass(LED_CLASSES);
+            $led_elem.addClass([RED])
         }
     }
 }

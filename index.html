@@ -58,10 +58,50 @@
                     <div class="led led-green blink"></div>
                 </li>
             </ul>
-            <aside>
-                <h3>Project Info</h3>
+            <h2>Change State Example</h2>
                 <p>
-                    This is a starter front-end project which will compile SCSS and JS files using Gulp 4.
+                    Change state (led indicators) of following nodes:
+                </p>
+                <p>
+
+                </p>
+                <p>
+                  <div class="play-view">
+                    <select name="folder" id="folder-selector">
+                      <option value="1">Folder 1</option>
+                      <option value="2">Folder 2</option>
+                      <option value="3">Folder 3</option>
+                    </select>
+                    <select name="state" id="folder-state">
+                      <option value="1">Pending</option>
+                      <option value="2">OCR Started</option>
+                      <option value="3">OCR Complete with Success</option>
+                      <option value="4">OCR Complete with Error</option>
+                    </select>
+                    <ul>
+                        <li>
+                          <div class="node" data-id="1">
+                            <div class="folder"></div>
+                            <div class="led led-yellow"></div>
+                            <div class="title">Folder 1</div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="node" data-id="2">
+                            <div class="folder"></div>
+                            <div class="led led-yellow"></div>
+                            <div class="title">Folder 2</div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="node" data-id="3">
+                            <div class="folder"></div>
+                            <div class="led led-yellow"></div>
+                            <div class="title">Folder 3</div>
+                          </div>
+                        </li>
+                    </ul>
+                  </div>
                 </p>
             </aside>
         </main>

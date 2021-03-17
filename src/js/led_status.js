@@ -1,5 +1,6 @@
 import _ from "underscore";
 import $ from "jquery";
+import Backbone from "backbone";
 
 const OCR_START = 'ocr-start';
 const OCR_COMPLETE = 'ocr-complete';
@@ -18,13 +19,30 @@ const LED_CLASSES = [
 export class LEDDocumentStatus {
 
     constructor(dispatcher, config={}) {
+        let host, ws_url, that=this;
+
         if (_.isEmpty(dispatcher)) {
-            console.error("Empty consumer provided");
-            return;
+            dispatcher = _.clone(Backbone.Events);
         }
+        if (_.isEmpty(config)) {
+            config = {
+                'node_selector': '.node',
+                'led_selector': '.led' // led selector within node
+            };
+        }
+
         this._dispatcher = dispatcher;
         this._config = config;
         this._dispatcher.on("leds.document", this.on_update, this);
+
+        host = window.location.host;
+        ws_url = `ws://${host}/ws/leds/document`;
+
+        this._socket = new WebSocket(ws_url);
+        this._socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            that._dispatcher.trigger("leds.document", data);
+        };
     }
 
     on_update(message) {

@@ -12,7 +12,17 @@ Project contains following folders:
 
 ## Usage
 
+A mini flask based web application is provided in site folder. Its goal is to
+run led_status outside of Papermerge.
 
-Following command will assemble assets into dist folder:
+1. First build js/css distribution files with:
 
-$ gulp
+    $ gulp
+
+
+2. Launch local project to see led_status in action:
+
+    $ cd site
+    $ ./run.sh
+
+point browser to http://localhost:5000/ web address.

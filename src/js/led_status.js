@@ -1,7 +1,13 @@
 import _ from "underscore";
 import $ from "jquery";
 import Backbone from "backbone";
+import led_unknown_svg from '../assets/led-unknown.svg';
+import led_pending_svg from '../assets/led-pending.svg';
+import led_in_progress_svg from '../assets/led-in-progress.svg';
+import led_success_svg from '../assets/led-success.svg';
+import led_fail_svg from '../assets/led-fail.svg';
 
+const PENDING = 'pending';
 const OCR_START = 'ocr-start';
 const OCR_COMPLETE = 'ocr-complete';
 const SUCCESS = 'success'
@@ -87,7 +93,6 @@ export class LEDDocumentStatus {
             return;
         }
 
-
         css_selector = this._config['led_selector']
         $led_elem = $dom_node.find(css_selector);
 
@@ -103,22 +108,17 @@ export class LEDDocumentStatus {
 
         //console.log(`state=${state}`)
 
-        if (state == OCR_START) {
+        if (state == PENDING) {
+            $led_elem.html(led_pending_svg);
+        } else if (state == OCR_START) {
             // green blinking
-            $led_elem.removeClass(LED_CLASSES);
-            $led_elem.addClass([GREEN, BLINK])
-        }
-
-        if (state == OCR_COMPLETE && result == SUCCESS) {
+            $led_elem.html(led_in_progress_svg);
+        } else if (state == OCR_COMPLETE && result == SUCCESS) {
             // green static
-            $led_elem.removeClass(LED_CLASSES);
-            $led_elem.addClass([GREEN])
-        }
-
-        if (state == OCR_COMPLETE && result == ERROR) {
+            $led_elem.html(led_success_svg);
+        } else if (state == OCR_COMPLETE && result == ERROR) {
             // red static
-            $led_elem.removeClass(LED_CLASSES);
-            $led_elem.addClass([RED])
+            $led_elem.html(led_fail_svg);
         }
     }
 }

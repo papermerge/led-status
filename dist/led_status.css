@@ -1,5 +1,5 @@
 @charset "UTF-8";
-.led {
+svg.led {
   /* Use the current text color as the icon’s fill color. */
   fill: currentColor;
   /* Inherit the text’s size too. Also allows sizing the icon by changing its font-size. */
@@ -10,22 +10,22 @@
   /* Paths and strokes that overflow the viewBox can show in IE11. */
   overflow: hidden; }
 
-.led-unknown {
+svg.led-unknown {
   fill: #aaa; }
 
-.led-pending {
+svg.led-pending {
   fill: orange; }
 
-.led-in-progress {
+svg.led-in-progress {
   fill: None; }
 
-.led-success {
+svg.led-success {
   fill: #0aa70a; }
 
-.led-fail {
+svg.led-fail {
   fill: #e22e2e; }
 
-.led-in-progress {
+svg.led-in-progress {
   animation: led_rotate_svg 1s linear infinite; }
 
 @keyframes led_rotate_svg {

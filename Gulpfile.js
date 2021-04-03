@@ -43,6 +43,4 @@ function watch_task() {
 
 exports.default = series(
     sass_task,
-    js_bundle,
-    watch_task
 );

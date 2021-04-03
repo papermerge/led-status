@@ -8,4 +8,12 @@ module.exports = {
     filename: 'leds.bundle.js',
     library: 'LEDS',
   },
+  module: {
+    rules: [
+        {
+            test: /\.svg/,
+            type: 'asset/source',
+        }
+    ]
+  }
 };

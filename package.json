@@ -6,13 +6,17 @@
     "dms",
     "document management system"
   ],
-  "scripts": 
-    {
-      "test": "jasmine"
-    },
+  "scripts": {
+    "test": "jasmine"
+  },
   "author": "Eugen Ciur",
   "license": "Apache 2.0",
   "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/register": "^7.13.14",
+    "babel-preset": "^1.1.7",
+    "babel-register": "^6.26.0",
     "backbone": "^1.4.0",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.3.0",

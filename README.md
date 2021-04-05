@@ -26,3 +26,11 @@ run led_status outside of Papermerge.
     $ ./run.sh
 
 point browser to http://localhost:5000/ web address.
+
+## Build JS Bundle
+
+To createa javascript bundle with webpack, run:
+
+    $ npx webpack ./src/js/led_status.js
+
+JS bundle will be saved in `dist/leds.bundle.js` file.

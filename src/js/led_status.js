@@ -25,7 +25,7 @@ class LEDStatus {
     constructor(dispatcher, config={}) {
         /**
         `distapcher` is Backbone.Events class used as events trigger.
-            You can send "leds.document" type events.
+            You can send event defined by this.event_name.
 
         `config` is a dictionary with following keys:
             * 'node_selector' default value '.node'
@@ -184,12 +184,7 @@ export class LEDDocumentStatus extends LEDStatus {
         document_id = message['document_id'];
         selector = this._config['node_selector'];
         doc_node = $(`${selector}[data-id='${document_id}']`);
-        /*
-        console.log(
-            `Node selector = ${selector}[data-id='${document_id}'], count=${doc_node.length}`
-        );
-        */
-        
+       
         return doc_node;
     } // find_node
 

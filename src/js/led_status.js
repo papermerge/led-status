@@ -1,6 +1,9 @@
+import "../scss/led_status.scss";
+
 import _ from "underscore";
 import $ from "jquery";
 import Backbone from "backbone";
+
 import led_unknown_svg from '../assets/led-unknown.svg';
 import led_pending_svg from '../assets/led-pending.svg';
 import led_in_progress_svg from '../assets/led-in-progress.svg';

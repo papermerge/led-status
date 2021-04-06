@@ -2130,6 +2130,82 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/runtime/api.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+// eslint-disable-next-line func-names
+
+module.exports = function (cssWithMappingToString) {
+  var list = []; // return the list of modules as css string
+
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = cssWithMappingToString(item);
+
+      if (item[2]) {
+        return "@media ".concat(item[2], " {").concat(content, "}");
+      }
+
+      return content;
+    }).join("");
+  }; // import a list of modules into the list
+  // eslint-disable-next-line func-names
+
+
+  list.i = function (modules, mediaQuery, dedupe) {
+    if (typeof modules === "string") {
+      // eslint-disable-next-line no-param-reassign
+      modules = [[null, modules, ""]];
+    }
+
+    var alreadyImportedModules = {};
+
+    if (dedupe) {
+      for (var i = 0; i < this.length; i++) {
+        // eslint-disable-next-line prefer-destructuring
+        var id = this[i][0];
+
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = [].concat(modules[_i]);
+
+      if (dedupe && alreadyImportedModules[item[0]]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      if (mediaQuery) {
+        if (!item[2]) {
+          item[2] = mediaQuery;
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
+        }
+      }
+
+      list.push(item);
+    }
+  };
+
+  return list;
+};
+
+/***/ }),
+
 /***/ "./node_modules/jquery/dist/jquery.js":
 /*!********************************************!*\
   !*** ./node_modules/jquery/dist/jquery.js ***!
@@ -12416,7 +12492,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "MAX_ARRAY_INDEX": () => (/* binding */ MAX_ARRAY_INDEX)
 /* harmony export */ });
 // Current version.
-var VERSION = '1.12.0'; // Establish the root object, `window` (`self`) in the browser, `global`
+var VERSION = '1.12.1'; // Establish the root object, `window` (`self`) in the browser, `global`
 // on the server, or `this` in some virtual machines. We use `self`
 // instead of `window` for `WebWorker` support.
 
@@ -12961,7 +13037,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ debounce)
 /* harmony export */ });
 /* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ "./node_modules/underscore/modules/restArguments.js");
-/* harmony import */ var _delay_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./delay.js */ "./node_modules/underscore/modules/delay.js");
+/* harmony import */ var _now_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./now.js */ "./node_modules/underscore/modules/now.js");
 
  // When a sequence of calls of the returned function ends, the argument
 // function is triggered. The end of a sequence is defined by the `wait`
@@ -12969,22 +13045,29 @@ __webpack_require__.r(__webpack_exports__);
 // triggered at the beginning of the sequence instead of at the end.
 
 function debounce(func, wait, immediate) {
-  var timeout, result;
+  var timeout, previous, args, result, context;
 
-  var later = function (context, args) {
-    timeout = null;
-    if (args) result = func.apply(context, args);
+  var later = function () {
+    var passed = (0,_now_js__WEBPACK_IMPORTED_MODULE_1__.default)() - previous;
+
+    if (wait > passed) {
+      timeout = setTimeout(later, wait - passed);
+    } else {
+      timeout = null;
+      if (!immediate) result = func.apply(context, args); // This check is needed because `func` can recursively invoke `debounced`.
+
+      if (!timeout) args = context = null;
+    }
   };
 
-  var debounced = (0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__.default)(function (args) {
-    if (timeout) clearTimeout(timeout);
+  var debounced = (0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__.default)(function (_args) {
+    context = this;
+    args = _args;
+    previous = (0,_now_js__WEBPACK_IMPORTED_MODULE_1__.default)();
 
-    if (immediate) {
-      var callNow = !timeout;
+    if (!timeout) {
       timeout = setTimeout(later, wait);
-      if (callNow) result = func.apply(this, args);
-    } else {
-      timeout = (0,_delay_js__WEBPACK_IMPORTED_MODULE_1__.default)(later, wait, this, args);
+      if (immediate) result = func.apply(context, args);
     }
 
     return result;
@@ -12992,7 +13075,7 @@ function debounce(func, wait, immediate) {
 
   debounced.cancel = function () {
     clearTimeout(timeout);
-    timeout = null;
+    timeout = args = context = null;
   };
 
   return debounced;
@@ -14053,7 +14136,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _underscore_array_methods_js__WEBPACK_IMPORTED_MODULE_125__ = __webpack_require__(/*! ./underscore-array-methods.js */ "./node_modules/underscore/modules/underscore-array-methods.js");
 // Named Exports
 // =============
-//     Underscore.js 1.12.0
+//     Underscore.js 1.12.1
 //     https://underscorejs.org
 //     (c) 2009-2020 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Underscore may be freely distributed under the MIT license.
@@ -16353,11 +16436,12 @@ var escapeRegExp = /\\|'|\r|\n|\u2028|\u2029/g;
 
 function escapeChar(match) {
   return '\\' + escapes[match];
-} // JavaScript micro-templating, similar to John Resig's implementation.
+}
+
+var bareIdentifier = /^\s*(\w|\$)+\s*$/; // JavaScript micro-templating, similar to John Resig's implementation.
 // Underscore templating handles arbitrary delimiters, preserves whitespace,
 // and correctly escapes quotes within interpolated code.
 // NB: `oldSettings` only exists for backwards compatibility.
-
 
 function template(text, settings, oldSettings) {
   if (!settings && oldSettings) settings = oldSettings;
@@ -16382,14 +16466,22 @@ function template(text, settings, oldSettings) {
 
     return match;
   });
-  source += "';\n"; // If a variable is not specified, place data values in local scope.
+  source += "';\n";
+  var argument = settings.variable;
 
-  if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+  if (argument) {
+    if (!bareIdentifier.test(argument)) throw new Error(argument);
+  } else {
+    // If a variable is not specified, place data values in local scope.
+    source = 'with(obj||{}){\n' + source + '}\n';
+    argument = 'obj';
+  }
+
   source = "var __t,__p='',__j=Array.prototype.join," + "print=function(){__p+=__j.call(arguments,'');};\n" + source + 'return __p;\n';
   var render;
 
   try {
-    render = new Function(settings.variable || 'obj', '_', source);
+    render = new Function(argument, '_', source);
   } catch (e) {
     e.source = source;
     throw e;
@@ -16400,7 +16492,6 @@ function template(text, settings, oldSettings) {
   }; // Provide the compiled source as a convenience for precompilation.
 
 
-  var argument = settings.variable || 'obj';
   template.source = 'function(' + argument + '){\n' + source + '}';
   return template;
 }
@@ -16946,6 +17037,339 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/scss/led_status.scss":
+/*!***************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/scss/led_status.scss ***!
+  \***************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\nsvg.led {\n  /* Use the current text color as the icon’s fill color. */\n  fill: currentColor;\n  /* Inherit the text’s size too. Also allows sizing the icon by changing its font-size. */\n  width: 1em;\n  height: 1em;\n  /* The default vertical-align is `baseline`, which leaves a few pixels of space below the icon. Using `center` prevents this. For icons shown alongside text, you may want to use a more precise value, e.g. `vertical-align: -4px` or `vertical-align: -0.15em`. */\n  vertical-align: middle;\n  /* Paths and strokes that overflow the viewBox can show in IE11. */\n  overflow: hidden;\n}\n\nsvg.led-unknown {\n  fill: #aaa;\n}\n\nsvg.led-pending {\n  fill: orange;\n}\n\nsvg.led-in-progress {\n  fill: None;\n}\n\nsvg.led-success {\n  fill: #0aa70a;\n}\n\nsvg.led-fail {\n  fill: #e22e2e;\n}\n\nsvg.led-in-progress {\n  animation: led_rotate_svg 1s linear infinite;\n}\n\n@keyframes led_rotate_svg {\n  to {\n    transform: rotate(360deg);\n  }\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./src/scss/led_status.scss":
+/*!**********************************!*\
+  !*** ./src/scss/led_status.scss ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_node_modules_sass_loader_dist_cjs_js_led_status_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!../../node_modules/sass-loader/dist/cjs.js!./led_status.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/scss/led_status.scss");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_node_modules_sass_loader_dist_cjs_js_led_status_scss__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_node_modules_sass_loader_dist_cjs_js_led_status_scss__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var isOldIE = function isOldIE() {
+  var memo;
+  return function memorize() {
+    if (typeof memo === 'undefined') {
+      // Test for IE <= 9 as proposed by Browserhacks
+      // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+      // Tests for existence of standard globals is to allow style-loader
+      // to operate correctly into non-standard environments
+      // @see https://github.com/webpack-contrib/style-loader/issues/177
+      memo = Boolean(window && document && document.all && !window.atob);
+    }
+
+    return memo;
+  };
+}();
+
+var getTarget = function getTarget() {
+  var memo = {};
+  return function memorize(target) {
+    if (typeof memo[target] === 'undefined') {
+      var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself
+
+      if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+        try {
+          // This will throw an exception if access to iframe is blocked
+          // due to cross-origin restrictions
+          styleTarget = styleTarget.contentDocument.head;
+        } catch (e) {
+          // istanbul ignore next
+          styleTarget = null;
+        }
+      }
+
+      memo[target] = styleTarget;
+    }
+
+    return memo[target];
+  };
+}();
+
+var stylesInDom = [];
+
+function getIndexByIdentifier(identifier) {
+  var result = -1;
+
+  for (var i = 0; i < stylesInDom.length; i++) {
+    if (stylesInDom[i].identifier === identifier) {
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+function modulesToDom(list, options) {
+  var idCountMap = {};
+  var identifiers = [];
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var id = options.base ? item[0] + options.base : item[0];
+    var count = idCountMap[id] || 0;
+    var identifier = "".concat(id, " ").concat(count);
+    idCountMap[id] = count + 1;
+    var index = getIndexByIdentifier(identifier);
+    var obj = {
+      css: item[1],
+      media: item[2],
+      sourceMap: item[3]
+    };
+
+    if (index !== -1) {
+      stylesInDom[index].references++;
+      stylesInDom[index].updater(obj);
+    } else {
+      stylesInDom.push({
+        identifier: identifier,
+        updater: addStyle(obj, options),
+        references: 1
+      });
+    }
+
+    identifiers.push(identifier);
+  }
+
+  return identifiers;
+}
+
+function insertStyleElement(options) {
+  var style = document.createElement('style');
+  var attributes = options.attributes || {};
+
+  if (typeof attributes.nonce === 'undefined') {
+    var nonce =  true ? __webpack_require__.nc : 0;
+
+    if (nonce) {
+      attributes.nonce = nonce;
+    }
+  }
+
+  Object.keys(attributes).forEach(function (key) {
+    style.setAttribute(key, attributes[key]);
+  });
+
+  if (typeof options.insert === 'function') {
+    options.insert(style);
+  } else {
+    var target = getTarget(options.insert || 'head');
+
+    if (!target) {
+      throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+    }
+
+    target.appendChild(style);
+  }
+
+  return style;
+}
+
+function removeStyleElement(style) {
+  // istanbul ignore if
+  if (style.parentNode === null) {
+    return false;
+  }
+
+  style.parentNode.removeChild(style);
+}
+/* istanbul ignore next  */
+
+
+var replaceText = function replaceText() {
+  var textStore = [];
+  return function replace(index, replacement) {
+    textStore[index] = replacement;
+    return textStore.filter(Boolean).join('\n');
+  };
+}();
+
+function applyToSingletonTag(style, index, remove, obj) {
+  var css = remove ? '' : obj.media ? "@media ".concat(obj.media, " {").concat(obj.css, "}") : obj.css; // For old IE
+
+  /* istanbul ignore if  */
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = replaceText(index, css);
+  } else {
+    var cssNode = document.createTextNode(css);
+    var childNodes = style.childNodes;
+
+    if (childNodes[index]) {
+      style.removeChild(childNodes[index]);
+    }
+
+    if (childNodes.length) {
+      style.insertBefore(cssNode, childNodes[index]);
+    } else {
+      style.appendChild(cssNode);
+    }
+  }
+}
+
+function applyToTag(style, options, obj) {
+  var css = obj.css;
+  var media = obj.media;
+  var sourceMap = obj.sourceMap;
+
+  if (media) {
+    style.setAttribute('media', media);
+  } else {
+    style.removeAttribute('media');
+  }
+
+  if (sourceMap && typeof btoa !== 'undefined') {
+    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
+  } // For old IE
+
+  /* istanbul ignore if  */
+
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    while (style.firstChild) {
+      style.removeChild(style.firstChild);
+    }
+
+    style.appendChild(document.createTextNode(css));
+  }
+}
+
+var singleton = null;
+var singletonCounter = 0;
+
+function addStyle(obj, options) {
+  var style;
+  var update;
+  var remove;
+
+  if (options.singleton) {
+    var styleIndex = singletonCounter++;
+    style = singleton || (singleton = insertStyleElement(options));
+    update = applyToSingletonTag.bind(null, style, styleIndex, false);
+    remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+  } else {
+    style = insertStyleElement(options);
+    update = applyToTag.bind(null, style, options);
+
+    remove = function remove() {
+      removeStyleElement(style);
+    };
+  }
+
+  update(obj);
+  return function updateStyle(newObj) {
+    if (newObj) {
+      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap) {
+        return;
+      }
+
+      update(obj = newObj);
+    } else {
+      remove();
+    }
+  };
+}
+
+module.exports = function (list, options) {
+  options = options || {}; // Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+  // tags it will allow on a page
+
+  if (!options.singleton && typeof options.singleton !== 'boolean') {
+    options.singleton = isOldIE();
+  }
+
+  list = list || [];
+  var lastIdentifiers = modulesToDom(list, options);
+  return function update(newList) {
+    newList = newList || [];
+
+    if (Object.prototype.toString.call(newList) !== '[object Array]') {
+      return;
+    }
+
+    for (var i = 0; i < lastIdentifiers.length; i++) {
+      var identifier = lastIdentifiers[i];
+      var index = getIndexByIdentifier(identifier);
+      stylesInDom[index].references--;
+    }
+
+    var newLastIdentifiers = modulesToDom(newList, options);
+
+    for (var _i = 0; _i < lastIdentifiers.length; _i++) {
+      var _identifier = lastIdentifiers[_i];
+
+      var _index = getIndexByIdentifier(_identifier);
+
+      if (stylesInDom[_index].references === 0) {
+        stylesInDom[_index].updater();
+
+        stylesInDom.splice(_index, 1);
+      }
+    }
+
+    lastIdentifiers = newLastIdentifiers;
+  };
+};
+
+/***/ }),
+
 /***/ "./src/assets/led-fail.svg":
 /*!*********************************!*\
   !*** ./src/assets/led-fail.svg ***!
@@ -17015,7 +17439,7 @@ module.exports = "<svg class=\"led led-unknown\" width=\"16\" height=\"16\" view
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
+/******/ 			id: moduleId,
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
@@ -17028,6 +17452,18 @@ module.exports = "<svg class=\"led led-unknown\" width=\"16\" height=\"16\" view
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -17081,14 +17517,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "LEDDocumentStatus": () => (/* binding */ LEDDocumentStatus),
 /* harmony export */   "LEDPageStatus": () => (/* binding */ LEDPageStatus)
 /* harmony export */ });
-/* harmony import */ var underscore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! underscore */ "./node_modules/underscore/modules/index-all.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var backbone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! backbone */ "./node_modules/backbone/backbone.js");
-/* harmony import */ var _assets_led_unknown_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../assets/led-unknown.svg */ "./src/assets/led-unknown.svg");
-/* harmony import */ var _assets_led_pending_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/led-pending.svg */ "./src/assets/led-pending.svg");
-/* harmony import */ var _assets_led_in_progress_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../assets/led-in-progress.svg */ "./src/assets/led-in-progress.svg");
-/* harmony import */ var _assets_led_success_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../assets/led-success.svg */ "./src/assets/led-success.svg");
-/* harmony import */ var _assets_led_fail_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../assets/led-fail.svg */ "./src/assets/led-fail.svg");
+/* harmony import */ var _scss_led_status_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/led_status.scss */ "./src/scss/led_status.scss");
+/* harmony import */ var underscore__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! underscore */ "./node_modules/underscore/modules/index-all.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var backbone__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! backbone */ "./node_modules/backbone/backbone.js");
+/* harmony import */ var _assets_led_unknown_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/led-unknown.svg */ "./src/assets/led-unknown.svg");
+/* harmony import */ var _assets_led_pending_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../assets/led-pending.svg */ "./src/assets/led-pending.svg");
+/* harmony import */ var _assets_led_in_progress_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../assets/led-in-progress.svg */ "./src/assets/led-in-progress.svg");
+/* harmony import */ var _assets_led_success_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../assets/led-success.svg */ "./src/assets/led-success.svg");
+/* harmony import */ var _assets_led_fail_svg__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../assets/led-fail.svg */ "./src/assets/led-fail.svg");
+
 
 
 
@@ -17121,8 +17559,8 @@ class LEDStatus {
         ws_url,
         that = this;
 
-    if (underscore__WEBPACK_IMPORTED_MODULE_0__.default.isEmpty(dispatcher)) {
-      dispatcher = underscore__WEBPACK_IMPORTED_MODULE_0__.default.clone(backbone__WEBPACK_IMPORTED_MODULE_2__.Events);
+    if (underscore__WEBPACK_IMPORTED_MODULE_1__.default.isEmpty(dispatcher)) {
+      dispatcher = underscore__WEBPACK_IMPORTED_MODULE_1__.default.clone(backbone__WEBPACK_IMPORTED_MODULE_3__.Events);
     }
 
     this._config = Object.assign(default_config, config);
@@ -17197,7 +17635,7 @@ class LEDStatus {
     */
     let led_doc;
 
-    if (underscore__WEBPACK_IMPORTED_MODULE_0__.default.isEmpty(message)) {
+    if (underscore__WEBPACK_IMPORTED_MODULE_1__.default.isEmpty(message)) {
       return;
     }
 
@@ -17271,7 +17709,7 @@ class LEDDocumentStatus extends LEDStatus {
     let doc_node, nodes, selector, document_id;
     document_id = message['document_id'];
     selector = this._config['node_selector'];
-    doc_node = jquery__WEBPACK_IMPORTED_MODULE_1__(`${selector}[data-id='${document_id}']`);
+    doc_node = jquery__WEBPACK_IMPORTED_MODULE_2__(`${selector}[data-id='${document_id}']`);
     return doc_node;
   } // find_node
 
@@ -17279,7 +17717,7 @@ class LEDDocumentStatus extends LEDStatus {
   update_state($dom_node, message) {
     let $led_elem, css_selector, message_type;
 
-    if (underscore__WEBPACK_IMPORTED_MODULE_0__.default.isEmpty($dom_node)) {
+    if (underscore__WEBPACK_IMPORTED_MODULE_1__.default.isEmpty($dom_node)) {
       console.error("LEDStatus: empty node element");
       return;
     }
@@ -17288,19 +17726,19 @@ class LEDDocumentStatus extends LEDStatus {
     $led_elem = $dom_node.find(css_selector);
     message_type = message['type'];
 
-    if (underscore__WEBPACK_IMPORTED_MODULE_0__.default.isEmpty($led_elem)) {
+    if (underscore__WEBPACK_IMPORTED_MODULE_1__.default.isEmpty($led_elem)) {
       console.error("LEDStatus: empty led status element");
       return;
     }
 
     if (message_type == OCRDOCUMENT_RECEIVED) {
-      $led_elem.html(_assets_led_pending_svg__WEBPACK_IMPORTED_MODULE_4__);
+      $led_elem.html(_assets_led_pending_svg__WEBPACK_IMPORTED_MODULE_5__);
     } else if (message_type == OCRDOCUMENT_STARTED) {
-      $led_elem.html(_assets_led_in_progress_svg__WEBPACK_IMPORTED_MODULE_5__);
+      $led_elem.html(_assets_led_in_progress_svg__WEBPACK_IMPORTED_MODULE_6__);
     } else if (message_type == OCRDOCUMENT_SUCCEEDED) {
-      $led_elem.html(_assets_led_success_svg__WEBPACK_IMPORTED_MODULE_6__);
+      $led_elem.html(_assets_led_success_svg__WEBPACK_IMPORTED_MODULE_7__);
     } else if (message_type == OCRDOCUMENT_FAILED) {
-      $led_elem.html(_assets_led_fail_svg__WEBPACK_IMPORTED_MODULE_7__);
+      $led_elem.html(_assets_led_fail_svg__WEBPACK_IMPORTED_MODULE_8__);
     }
   } // update_state
 

@@ -25,7 +25,7 @@ module.exports = {
   },
   module: {
     rules: [
-      {
+      { // css/scss
         test: /\.s[ac]ss$/i,
         use: [
           // Creates `style` nodes from JS strings
@@ -35,24 +35,24 @@ module.exports = {
           // Compiles Sass to CSS
           "sass-loader",
         ],
-      },
+      }, // end of css/scss rule
       {
         test: /\.html$/i,  // used in tests
         loader: 'html-loader',
       },
-      {   // rule 1 - for loading svg files
+      {
         test: /\.svg/,
         type: 'asset/source',
-      },  // end of rule 1
-      {   // rule 2
+      },
+      {  // for js files
         test: /\.js$/,
         exclude: ["/node_modules/"],
         use: [
           {
             loader: "babel-loader",
           },
-        ],  // end of use
-      },  // end of rule 2
+        ],
+      }, // end of js rule
     ]  // end of rules
   },
   devtool: devtool  // correctly map sources in test mode

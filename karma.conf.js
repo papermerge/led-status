@@ -1,5 +1,7 @@
 module.exports = function(config) {
   config.set({
+    // test-dist/tests.bundle.js file is result of
+    // TESTBUILD=true npx webpack --config webpack.config.js
     files: ['test-dist/tests.bundle.js'],
     frameworks: ['mocha', 'chai'],
     plugins: [
@@ -12,9 +14,8 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     browsers: ['ChromeHeadless'],
-    singleRun: true,
+    singleRun: true,  // Karma captures browsers, runs the tests and exits
     autoWatch: false,
-    // singleRun: false, // Karma captures browsers, runs the tests and exits
     concurrency: Infinity
   })
 }

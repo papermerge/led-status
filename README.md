@@ -34,21 +34,11 @@ To create the javascript bundle with webpack, run:
     $ npx webpack ./src/js/led_status.js
 
 JS bundle will be saved in `dist/leds.bundle.js` file.
-
-Same effect can be achieved with following command:
-
-    $ npm run-script build
-
-Or
+Same thing can be achieved with:
 
     $ make build
 
 
 ## Run Tests
-
-    $ npm run-script test
-    $ npx mocha test-dist/tests.bundle.js
-
-You can run test suite using one command:
 
     $ make test

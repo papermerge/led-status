@@ -25,6 +25,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
+      },
       {   // rule 1 - for loading svg files
         test: /\.svg/,
         type: 'asset/source',

@@ -3,6 +3,7 @@ import { assert } from "chai";
 import _ from "underscore";
 import $ from "jquery";
 import Backbone from "backbone";
+import basic_test_html from "./basic_test.html";
 
 import { LEDDocumentStatus } from '../src/js/led_status.js';
 
@@ -21,6 +22,8 @@ describe("Basic test suite", function() {
     let dispatcher = _.clone(Backbone.Events);
 
     let doc_status = new LEDDocumentStatus(dispatcher, {'use_sockets': false});
+
+    $("body").append(basic_test_html);
 
     assert.equal(
         $(".led > .led-unknown").length, 1,

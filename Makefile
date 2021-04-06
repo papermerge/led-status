@@ -1,5 +1,6 @@
 test:
 	TESTBUILD=true npx webpack
+	npx karma start karma.conf.js
 
 clean:
 	rm -fr test-dist/

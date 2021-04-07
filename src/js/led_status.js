@@ -17,6 +17,12 @@ const OCRDOCUMENT_SUCCEEDED = 'ocrdocument.succeeded'
 const OCRDOCUMENT_FAILED = 'ocrdocument.failed'
 
 
+const OCRPAGE_RECEIVED = 'ocrpage.received'
+const OCRPAGE_STARTED = 'ocrpage.started'
+const OCRPAGE_SUCCEEDED = 'ocrpage.succeeded'
+const OCRPAGE_FAILED = 'ocrpage.failed'
+
+
 let default_config = {
     'node_selector': '.node',
     'led_selector': '.led',
@@ -100,16 +106,6 @@ class LEDStatus {
     }
 
     on_update(message) {
-        /*
-        Message is a dictionary with following keys:
-            * type
-            * document_id
-            * user_id
-        Where type can have one of following string values:
-            * ocrdocument.received
-            * ocrdocument.started
-            * ocrdocument.succeeded
-        */
         let led_doc;
 
         if (_.isEmpty(message)) {
@@ -119,16 +115,6 @@ class LEDStatus {
     }
 
     update(message) {
-        /*
-        Message is a dictionary with following keys:
-            * type
-            * document_id
-            * user_id
-        Where type can have one of following string values:
-            * ocrdocument.received
-            * ocrdocument.started
-            * ocrdocument.succeeded
-        */
         let $dom_node = this.find_node(message);
 
         if ($dom_node) {
@@ -248,10 +234,51 @@ export class LEDPageStatus extends LEDStatus {
     }
 
     find_node(message) {
-        // ...
+        /*
+        Message is a dictionary with following keys:
+            * type
+            * page_id
+            * user_id
+        Where type can have one of following string values:
+            * ocrpage.received
+            * ocrpage.started
+            * ocrpage.succeeded
+        */
+        let page_node, nodes, selector, page_id;
+
+        page_id = message['page_id'];
+        selector = this._config['node_selector'];
+        page_node = $(`${selector}[data-id='${page_id}']`);
+        
+        return page_node;
     }
 
     update_state($dom_node, message) {
-        // ...
+        let $led_elem, css_selector, message_type;
+
+        if (_.isEmpty($dom_node)) {
+            console.error("LEDStatus: empty node element");
+            return;
+        }
+
+        css_selector = this._config['led_selector']
+        $led_elem = $dom_node.find(css_selector);
+
+        message_type = message['type'];
+
+        if (_.isEmpty($led_elem)) {
+            console.error("LEDStatus: empty led status element");
+            return;
+        }
+
+        if (message_type == OCRPAGE_RECEIVED) {
+            $led_elem.html(led_pending_svg);
+        } else if (message_type == OCRPAGE_STARTED) {
+            $led_elem.html(led_in_progress_svg);
+        } else if (message_type == OCRPAGE_SUCCEEDED) {
+            $led_elem.html(led_success_svg);
+        } else if (message_type == OCRPAGE_FAILED) {
+            $led_elem.html(led_fail_svg);
+        }
     }
 }
